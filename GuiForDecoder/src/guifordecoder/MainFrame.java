@@ -5,6 +5,7 @@
 package guifordecoder;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import java.awt.CardLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -24,6 +25,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.UIManager;
+
+import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 
 /**
  *
@@ -49,16 +59,35 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jFileChooser1 = new javax.swing.JFileChooser();
+        buttongroupExt = new javax.swing.ButtonGroup();
+        jOptionPane2 = new javax.swing.JOptionPane();
         panelFiles = new javax.swing.JPanel();
         subPanelTool = new javax.swing.JPanel();
         buttonOF = new javax.swing.JButton();
         buttonRemoveAll = new javax.swing.JButton();
         buttonRemove = new javax.swing.JButton();
         jCheckBox2 = new javax.swing.JCheckBox();
+        buttonHelp = new javax.swing.JButton();
         panelFileFilters = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        radiobuttonAll = new javax.swing.JRadioButton();
+        radioButtonOther = new javax.swing.JRadioButton();
+        textFieldExt = new javax.swing.JTextField();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jTextField1 = new javax.swing.JTextField();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jTextField2 = new javax.swing.JTextField();
+        jSeparator1 = new javax.swing.JSeparator();
         panelCard = new javax.swing.JPanel();
         subPanelDragDrop = new javax.swing.JPanel();
-        DropFile = new javax.swing.JLabel();
+        panelDragDrop2 = new javax.swing.JPanel();
+        labelDropFile = new javax.swing.JLabel();
+        labelUploadIcon = new javax.swing.JLabel();
+        labelOr = new javax.swing.JLabel();
+        buttonBrowseFile = new javax.swing.JButton();
+        panelDragDrop3 = new javax.swing.JPanel();
+        panelDragDrop1 = new javax.swing.JPanel();
         subPanelFilesScroll = new javax.swing.JScrollPane();
         tableFiles = new javax.swing.JTable();
         panelFunctions = new javax.swing.JPanel();
@@ -78,6 +107,9 @@ public class MainFrame extends javax.swing.JFrame {
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuEdit = new javax.swing.JMenu();
+
+        jOptionPane2.setOptionType(0);
+        jOptionPane2.getAccessibleContext().setAccessibleParent(buttonDecode);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("File Decoder\n");
@@ -106,6 +138,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         jCheckBox2.setText("Select All");
 
+        buttonHelp.setIcon(new FlatHelpButtonIcon());
+        buttonHelp.setToolTipText(null);
+        buttonHelp.setAutoscrolls(true);
+        buttonHelp.setBorder(null);
+        buttonHelp.setBorderPainted(false);
+        buttonHelp.setContentAreaFilled(false);
+        buttonHelp.setIconTextGap(0);
+
         javax.swing.GroupLayout subPanelToolLayout = new javax.swing.GroupLayout(subPanelTool);
         subPanelTool.setLayout(subPanelToolLayout);
         subPanelToolLayout.setHorizontalGroup(
@@ -117,50 +157,229 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonRemoveAll)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(buttonHelp)
+                .addGap(63, 63, 63)
                 .addComponent(jCheckBox2)
                 .addContainerGap())
         );
         subPanelToolLayout.setVerticalGroup(
             subPanelToolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(subPanelToolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(buttonOF)
-                .addComponent(buttonRemoveAll)
-                .addComponent(buttonRemove)
-                .addComponent(jCheckBox2))
+            .addGroup(subPanelToolLayout.createSequentialGroup()
+                .addGroup(subPanelToolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonOF)
+                    .addComponent(buttonRemoveAll)
+                    .addComponent(buttonRemove)
+                    .addComponent(jCheckBox2)
+                    .addComponent(buttonHelp))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         panelFileFilters.setBorder(javax.swing.BorderFactory.createTitledBorder("File filters\n"));
+
+        jLabel4.setText("Extension:");
+
+        buttongroupExt.add(radiobuttonAll);
+        radiobuttonAll.setSelected(true);
+        radiobuttonAll.setText("All");
+
+        buttongroupExt.add(radioButtonOther);
+        radioButtonOther.setText("Other:");
+
+        textFieldExt.setForeground(java.awt.Color.lightGray);
+        textFieldExt.setText("ex:txt");
+        textFieldExt.setToolTipText("");
+        textFieldExt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textFieldExtFocusGained(evt);
+            }
+        });
+        textFieldExt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                textFieldExtMouseClicked(evt);
+            }
+        });
+        textFieldExt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldExtActionPerformed(evt);
+                textFieldExtDocument(evt);
+            }
+        });
+
+        jCheckBox3.setText("Hidden files");
+
+        jCheckBox4.setText("File name contains:");
+
+        jCheckBox5.setText("Regex script");
+        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox5ActionPerformed(evt);
+            }
+        });
+
+        jTextField2.setForeground(java.awt.Color.lightGray);
+        jTextField2.setText("ex: \\\\D[a-zA-Z]");
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         javax.swing.GroupLayout panelFileFiltersLayout = new javax.swing.GroupLayout(panelFileFilters);
         panelFileFilters.setLayout(panelFileFiltersLayout);
         panelFileFiltersLayout.setHorizontalGroup(
             panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                        .addComponent(radioButtonOther)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textFieldExt, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(radiobuttonAll))
+                .addGap(18, 18, 18)
+                .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                        .addComponent(jCheckBox4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jCheckBox3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                        .addComponent(jCheckBox5)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jTextField2))
+                .addContainerGap())
         );
         panelFileFiltersLayout.setVerticalGroup(
             panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
+            .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                        .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(radiobuttonAll)
+                            .addComponent(jCheckBox3)
+                            .addComponent(jCheckBox5))
+                        .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(panelFileFiltersLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(radioButtonOther)
+                                    .addComponent(textFieldExt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jCheckBox4)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFileFiltersLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2))))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelCard.setLayout(new java.awt.CardLayout());
 
-        DropFile.setText("DropFile");
+        subPanelDragDrop.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        subPanelDragDrop.setToolTipText("");
+
+        panelDragDrop2.setForeground(new java.awt.Color(255, 255, 255));
+
+        labelDropFile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        labelDropFile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelDropFile.setText("Drag&drop files here");
+
+        labelUploadIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/dropfilesicon.png"))); // NOI18N
+
+        labelOr.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        labelOr.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelOr.setText("or");
+        labelOr.setFocusable(false);
+        labelOr.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        buttonBrowseFile.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        buttonBrowseFile.setForeground(new java.awt.Color(51, 153, 255));
+        buttonBrowseFile.setText("Browse Files");
+        buttonBrowseFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonBrowseFileActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelDragDrop2Layout = new javax.swing.GroupLayout(panelDragDrop2);
+        panelDragDrop2.setLayout(panelDragDrop2Layout);
+        panelDragDrop2Layout.setHorizontalGroup(
+            panelDragDrop2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                .addGroup(panelDragDrop2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(labelDropFile, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE))
+                    .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                        .addGroup(panelDragDrop2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                                .addGap(85, 85, 85)
+                                .addComponent(labelUploadIcon))
+                            .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                                .addGap(73, 73, 73)
+                                .addComponent(labelOr, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addComponent(buttonBrowseFile)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        panelDragDrop2Layout.setVerticalGroup(
+            panelDragDrop2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelDragDrop2Layout.createSequentialGroup()
+                .addComponent(labelUploadIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelDropFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelOr)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonBrowseFile)
+                .addGap(38, 38, 38))
+        );
+
+        javax.swing.GroupLayout panelDragDrop3Layout = new javax.swing.GroupLayout(panelDragDrop3);
+        panelDragDrop3.setLayout(panelDragDrop3Layout);
+        panelDragDrop3Layout.setHorizontalGroup(
+            panelDragDrop3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 156, Short.MAX_VALUE)
+        );
+        panelDragDrop3Layout.setVerticalGroup(
+            panelDragDrop3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout panelDragDrop1Layout = new javax.swing.GroupLayout(panelDragDrop1);
+        panelDragDrop1.setLayout(panelDragDrop1Layout);
+        panelDragDrop1Layout.setHorizontalGroup(
+            panelDragDrop1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 156, Short.MAX_VALUE)
+        );
+        panelDragDrop1Layout.setVerticalGroup(
+            panelDragDrop1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout subPanelDragDropLayout = new javax.swing.GroupLayout(subPanelDragDrop);
         subPanelDragDrop.setLayout(subPanelDragDropLayout);
         subPanelDragDropLayout.setHorizontalGroup(
             subPanelDragDropLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(subPanelDragDropLayout.createSequentialGroup()
-                .addGap(256, 256, 256)
-                .addComponent(DropFile)
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addComponent(panelDragDrop1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelDragDrop2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelDragDrop3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         subPanelDragDropLayout.setVerticalGroup(
             subPanelDragDropLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(subPanelDragDropLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(DropFile)
-                .addContainerGap(72, Short.MAX_VALUE))
+            .addComponent(panelDragDrop2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelDragDrop1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelDragDrop3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         panelCard.add(subPanelDragDrop, "cardDragDrop");
@@ -227,7 +446,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFilesLayout.createSequentialGroup()
                 .addComponent(subPanelTool, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelFileFilters, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -272,35 +491,31 @@ public class MainFrame extends javax.swing.JFrame {
         subPanelDecodeLayout.setHorizontalGroup(
             subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(subPanelDecodeLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, subPanelDecodeLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(subPanelDecodeLayout.createSequentialGroup()
                         .addGroup(subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(subPanelDecodeLayout.createSequentialGroup()
-                                .addContainerGap()
+                                .addGap(6, 6, 6)
                                 .addGroup(subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(subPanelDecodeLayout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addGroup(subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel3)
-                                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(subPanelDecodeLayout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(52, 52, 52)
-                                        .addComponent(jRadioButton1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jRadioButton2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jCheckBox1))))
+                                    .addComponent(jLabel3)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2)))
                             .addGroup(subPanelDecodeLayout.createSequentialGroup()
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel2)))
-                        .addGap(0, 286, Short.MAX_VALUE)))
+                                .addComponent(jLabel1)
+                                .addGap(52, 52, 52)
+                                .addComponent(jRadioButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jCheckBox1)))
+                        .addGap(0, 179, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         subPanelDecodeLayout.setVerticalGroup(
@@ -316,9 +531,9 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(subPanelDecodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(subPanelDecodeLayout.createSequentialGroup()
@@ -336,7 +551,7 @@ public class MainFrame extends javax.swing.JFrame {
         subPanelDetectEncoding.setLayout(subPanelDetectEncodingLayout);
         subPanelDetectEncodingLayout.setHorizontalGroup(
             subPanelDetectEncodingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 632, Short.MAX_VALUE)
+            .addGap(0, 525, Short.MAX_VALUE)
         );
         subPanelDetectEncodingLayout.setVerticalGroup(
             subPanelDetectEncodingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,9 +611,10 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void panelCardAddDropAndDrag() {
-        new DropTarget(subPanelDragDrop, new DropTargetListener() {
+        new DropTarget(panelCard, new DropTargetListener() {
             @Override
             public void dragEnter(DropTargetDragEvent dtde) {
+                grayfilterPanelDragDrop(true);
             }
 
             @Override
@@ -411,6 +627,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void dragExit(DropTargetEvent dte) {
+                grayfilterPanelDragDrop(false);
             }
 
             @Override
@@ -431,12 +648,7 @@ public class MainFrame extends javax.swing.JFrame {
                     System.out.println(fl.getAbsolutePath());
                 }
                 dtde.dropComplete(true);
-                if(!files.isEmpty()){
-                    System.out.println("not empty");
-                    CardLayout c = (CardLayout) panelCard.getLayout();
-                    c.show(panelCard, "cardFile");
-                }
-                updateTable();
+                switchCards();
             }
         });
     }
@@ -447,12 +659,38 @@ public class MainFrame extends javax.swing.JFrame {
         if(jFileChooser1.showOpenDialog(subPanelTool) == JFileChooser.APPROVE_OPTION){
             files.addAll(Arrays.asList(jFileChooser1.getSelectedFiles()));
         }
-        updateTable();
+        switchCards();
     }//GEN-LAST:event_buttonOFActionPerformed
+    private void switchCards() {
+        updateTable();
+        String currentCard = files.isEmpty() ? "cardDragDrop" : "cardFile";
+        CardLayout c = (CardLayout) panelCard.getLayout();
+        c.show(panelCard, currentCard);
+    }
+    
+    //TODO improve plz
     private void updateTable(){
         DefaultTableModel model = (DefaultTableModel) tableFiles.getModel();
-        for(File f : files){
-            model.addRow(new Object[]{f.getName(),1,2,3,4,true});
+        HashSet<File> tableFiles = new HashSet<>(model.getRowCount());
+        HashSet<File> tempFiles = new HashSet<>();
+        DateFormat df = new SimpleDateFormat("dd/MM/yy  HH:mm:ss");
+        tempFiles.addAll(files);
+        for(int i = 0; i < model.getRowCount(); i++){
+            tableFiles.add(new File((String)model.getValueAt(i, 0)));
+        }
+        tempFiles.removeAll(tableFiles);
+        tableFiles.removeAll(files);
+        for(File f : tempFiles){
+            String name = f.getAbsolutePath();
+            String type = f.getAbsolutePath().substring(f.getAbsolutePath().lastIndexOf("."));
+            //shouldve chosen nio
+            String date = df.format(f.lastModified());
+            String size = String.valueOf(f.length()/1000l) + "KB";
+            String encoding = "idkdud";
+            model.addRow(new Object[]{name, type, date, size, encoding, true});
+        }
+        for(File f : tableFiles){
+//            model.removeRow(ERROR);
         }
     }
     private void buttonDecodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDecodeActionPerformed
@@ -465,6 +703,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void buttonRemoveAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveAllActionPerformed
         files.clear();
+        switchCards();
         //clear model
     }//GEN-LAST:event_buttonRemoveAllActionPerformed
 
@@ -472,6 +711,73 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonRemoveActionPerformed
 
+    private void buttonBrowseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonBrowseFileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonBrowseFileActionPerformed
+
+    private void textFieldExtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldExtActionPerformed
+        textFieldExt.setText(textFieldExt.getText());
+        textFieldExt.setFocusable(false);
+        radioButtonOther.requestFocus();
+        textFieldExt.setFocusable(true);
+    }//GEN-LAST:event_textFieldExtActionPerformed
+
+    private void textFieldExtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textFieldExtMouseClicked
+
+        if(textFieldExt.getText().equals("ex:txt"))
+        textFieldExt.setText("");
+    }//GEN-LAST:event_textFieldExtMouseClicked
+
+    private void textFieldExtDocument(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldExtDocument
+        
+    }//GEN-LAST:event_textFieldExtDocument
+
+    private void textFieldExtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldExtFocusGained
+        radioButtonOther.setSelected(true);
+        textFieldExt.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                System.out.println("isetfilefilterextension()"+e.getDocument());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                System.out.println("rsetfilefilterextension()"+e.getDocument());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+    }//GEN-LAST:event_textFieldExtFocusGained
+
+    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox5ActionPerformed
+    
+    private void grayfilterPanelDragDrop(boolean b) {
+        if(b){
+            panelDragDrop1.setBackground(new Color(230, 230, 230));
+            panelDragDrop2.setBackground(new Color(230, 230, 230));
+            panelDragDrop3.setBackground(new Color(230, 230, 230));
+            subPanelDragDrop.setBackground(new Color(230,230,230));
+            
+            labelDropFile.setEnabled(false);
+            labelUploadIcon.setEnabled(false);
+            labelOr.setEnabled(false);
+            buttonBrowseFile.setEnabled(false);
+        } else {
+            panelDragDrop1.setBackground(new Color(242, 242, 242));
+            panelDragDrop2.setBackground(new Color(242, 242, 242));
+            panelDragDrop3.setBackground(new Color(242, 242, 242));
+            subPanelDragDrop.setBackground(new Color(242,242,242));
+            
+            labelDropFile.setEnabled(true);
+            labelUploadIcon.setEnabled(true);
+            labelOr.setEnabled(true);
+            buttonBrowseFile.setEnabled(true);
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -482,6 +788,7 @@ public class MainFrame extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         FlatLightLaf.setup();
+        UIManager.put( "TabbedPane.selectedBackground", Color.white );
         //</editor-fold>
 
         /* Create and display the form */
@@ -493,13 +800,18 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel DropFile;
+    private javax.swing.JButton buttonBrowseFile;
     private javax.swing.JButton buttonDecode;
+    private javax.swing.JButton buttonHelp;
     private javax.swing.JButton buttonOF;
     private javax.swing.JButton buttonRemove;
     private javax.swing.JButton buttonRemoveAll;
+    private javax.swing.ButtonGroup buttongroupExt;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JFileChooser jFileChooser1;
@@ -507,15 +819,28 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JOptionPane jOptionPane2;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel labelDropFile;
+    private javax.swing.JLabel labelOr;
+    private javax.swing.JLabel labelUploadIcon;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenu menuFile;
     private javax.swing.JPanel panelCard;
+    private javax.swing.JPanel panelDragDrop1;
+    private javax.swing.JPanel panelDragDrop2;
+    private javax.swing.JPanel panelDragDrop3;
     private javax.swing.JPanel panelFileFilters;
     private javax.swing.JPanel panelFiles;
     private javax.swing.JPanel panelFunctions;
+    private javax.swing.JRadioButton radioButtonOther;
+    private javax.swing.JRadioButton radiobuttonAll;
     private javax.swing.JPanel subPanelDecode;
     private javax.swing.JPanel subPanelDetectEncoding;
     private javax.swing.JPanel subPanelDragDrop;
@@ -523,5 +848,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel subPanelTool;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tableFiles;
+    private javax.swing.JTextField textFieldExt;
     // End of variables declaration//GEN-END:variables
 }
