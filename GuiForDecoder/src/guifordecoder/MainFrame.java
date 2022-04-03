@@ -1043,7 +1043,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        textfieldTargetfolder.setText("C:\\Users\\Default\\Desktop\\decoded_files");
+        textfieldTargetfolder.setText(System.getProperty("user.home") + "\\Desktop\\decoded_files");
         textfieldTargetfolder.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 textfieldTargetfolderFocusLost(evt);
@@ -1088,14 +1088,14 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(textfieldTargetfolder, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                        .addComponent(textfieldTargetfolder)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonChoosetarget))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(radiobuttonTargetfolder)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radiobuttonOverwriteall)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 171, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -1588,7 +1588,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_comboboxTargetEncodingActionPerformed
 
     private void buttonDecodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDecodeActionPerformed
-         
+        setDecodeButton();
     }//GEN-LAST:event_buttonDecodeActionPerformed
 
     private void buttonSelectEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSelectEncodingActionPerformed
@@ -1697,7 +1697,7 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         if(!textfieldTargetfolder.isEnabled()) return;
-        String msg = "Decoded files will overwrite original files.\nNon-text files may be damaged in the process.\nConfirm?";
+        String msg = "Decoded files will overwrite original files.\nIf wrong encoding is selected, files\nmay be irreversibly damaged. Confirm?";
         int input = JOptionPane.showConfirmDialog(null, msg, "Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         if(input == JOptionPane.OK_OPTION) {
             fileDecoder.setOverwrite(true);
@@ -1731,6 +1731,31 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonChoosetargetActionPerformed
 
     // </editor-fold>
+    
+    private void setDecodeButton() {
+        HashSet<File> files = new HashSet();
+        for(int i = 0; i < tableFiles.getRowCount(); i++) {
+            if((boolean)tableFiles.getValueAt(i, 4)) 
+                files.add(new File((String)tableFiles.getValueAt(i, 0)));    
+        }
+        if(fileDecoder.getSourceCharset() == null) {
+            JOptionPane.showMessageDialog(null, "Select source Encoding!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if(files.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Select files!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        for(File f : files) {
+            if(!f.exists()) {
+                JOptionPane.showMessageDialog(null, f.getAbsolutePath()+" does not exist!", null, JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+        fileDecoder.setSourceFiles(files);
+        fileDecoder.decode();
+        JOptionPane.showMessageDialog(null, "Decoding complete!", "Complete!", JOptionPane.INFORMATION_MESSAGE);
+    }
     
     private void setComboboxEncoding(JComboBox box, String defaulttext) {
         if(defaulttext!=null) box.addItem(defaulttext);
@@ -1890,7 +1915,7 @@ public class MainFrame extends javax.swing.JFrame {
         fileDecoder = new FileDecoder();
         fileDecoder.setOverwrite(false);
         fileDecoder.setTargetCharset(Charset.forName("UTF-8"));
-        fileDecoder.setTargetFolder(new File("C:\\Users\\Default\\Desktop\\decoded_files"));
+        fileDecoder.setTargetFolder(new File(System.getProperty("user.home"), "\\Desktop\\decoded_files"));
     }
     
     private void initFileSelect() {

@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,15 +51,26 @@ public class Decoder {
 	}
 	
 	public void decode(File source, File target, Charset sourceCs, Charset targetCs) {
-		try (
-				BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(source), sourceCs));
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), targetCs));
-				) {
+		List<Integer> data = new ArrayList<>();
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(source), sourceCs));) {
 			int read;
-			while((read = reader.read()) != -1)
-				writer.write(read);
+			while((read = reader.read()) != -1) {
+				data.add(read);
+			}
+			target.delete();
+			target.createNewFile();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), targetCs));) {
+			for(int i : data) {
+				writer.write(i);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
