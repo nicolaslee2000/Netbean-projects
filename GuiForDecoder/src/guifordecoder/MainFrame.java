@@ -1,6 +1,5 @@
 package guifordecoder;
 
-import com.formdev.flatlaf.ui.FlatComboBoxUI;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,10 +19,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -39,8 +40,9 @@ public class MainFrame extends javax.swing.JFrame {
      */
     
     public MainFrame() {
+        initFileSelect();
+        initFileDecoder();
         initComponents();
-        fileSelect = new FileSelect();
     }
 
     /**
@@ -67,7 +69,6 @@ public class MainFrame extends javax.swing.JFrame {
         jComboBox4 = new javax.swing.JComboBox<>();
         jButton7 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
-        jOptionPane1 = new javax.swing.JOptionPane();
         dialogAuto = new javax.swing.JDialog();
         jPanel5 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -95,6 +96,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
         jMenuItem1 = new javax.swing.JMenuItem();
+        buttongroupTargetfolder = new javax.swing.ButtonGroup();
         panelFiles = new javax.swing.JPanel();
         subPanelTool = new javax.swing.JPanel();
         buttonOF = new javax.swing.JButton();
@@ -106,11 +108,11 @@ public class MainFrame extends javax.swing.JFrame {
         radiobuttonAll = new javax.swing.JRadioButton();
         radioButtonOther = new javax.swing.JRadioButton();
         textFieldExt = new javax.swing.JTextField();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jTextField2 = new javax.swing.JTextField();
+        checkBoxHiddenFiles = new javax.swing.JCheckBox();
+        checkboxFileName = new javax.swing.JCheckBox();
+        textFieldFileName = new javax.swing.JTextField();
+        checkboxRegex = new javax.swing.JCheckBox();
+        textfieldRegex = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         panelCard = new javax.swing.JPanel();
         subPanelDragDrop = new javax.swing.JPanel();
@@ -128,19 +130,17 @@ public class MainFrame extends javax.swing.JFrame {
         subPanelDecode = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        comboboxSourceEncoding = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
+        comboboxTargetEncoding = new javax.swing.JComboBox<>();
         jSeparator2 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         buttonDecode = new javax.swing.JButton();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
+        textfieldTargetfolder = new javax.swing.JTextField();
+        buttonChoosetarget = new javax.swing.JButton();
+        radiobuttonTargetfolder = new javax.swing.JRadioButton();
+        radiobuttonOverwriteall = new javax.swing.JRadioButton();
         subPanelDetectEncoding = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         buttonSelectEncoding = new javax.swing.JButton();
@@ -176,7 +176,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JSeparator();
         jButton12 = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jButton14 = new javax.swing.JButton();
@@ -325,8 +324,6 @@ public class MainFrame extends javax.swing.JFrame {
         dialogSelectEncoding.getAccessibleContext().setAccessibleDescription("");
         dialogSelectEncoding.getAccessibleContext().setAccessibleParent(this);
         dialogSelectEncoding.setLocationRelativeTo(this);
-
-        jOptionPane1.setOptionType(1);
 
         dialogAuto.setTitle("Result");
         dialogAuto.setAlwaysOnTop(true);
@@ -592,7 +589,7 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationByPlatform(true);
         setMinimumSize(new java.awt.Dimension(530, 550));
 
-        buttonOF.setText("Open File(s)");
+        buttonOF.setText("Open File..");
         buttonOF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonOFActionPerformed(evt);
@@ -669,25 +666,62 @@ public class MainFrame extends javax.swing.JFrame {
         textFieldExt.setForeground(java.awt.Color.lightGray);
         textFieldExt.setText("txt");
         textFieldExt.setToolTipText("");
+        textFieldExt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textFieldExtFocusGained(evt);
+            }
+        });
         textFieldExt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textFieldExtActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setText("Hidden files");
-
-        jCheckBox4.setText("File name contains:");
-
-        jCheckBox5.setText("Regex script");
-        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+        checkBoxHiddenFiles.setSelected(true);
+        checkBoxHiddenFiles.setText("Hidden files");
+        checkBoxHiddenFiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox5ActionPerformed(evt);
+                checkBoxHiddenFilesActionPerformed(evt);
             }
         });
 
-        jTextField2.setForeground(java.awt.Color.lightGray);
-        jTextField2.setText("ex: \\\\D[a-zA-Z]");
+        checkboxFileName.setText("File name contains:");
+        checkboxFileName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkboxFileNameActionPerformed(evt);
+            }
+        });
+
+        textFieldFileName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textFieldFileNameFocusGained(evt);
+            }
+        });
+        textFieldFileName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldFileNameActionPerformed(evt);
+            }
+        });
+
+        checkboxRegex.setText("Regex script");
+        checkboxRegex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkboxRegexActionPerformed(evt);
+            }
+        });
+
+        textfieldRegex.setForeground(java.awt.Color.lightGray);
+        textfieldRegex.setText("ex: \\\\D[a-zA-Z]");
+        textfieldRegex.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textfieldRegexFocusGained(evt);
+            }
+        });
+        textfieldRegex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textfieldRegexActionPerformed(evt);
+            }
+        });
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -708,18 +742,18 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFileFiltersLayout.createSequentialGroup()
-                        .addComponent(jCheckBox4)
+                        .addComponent(checkboxFileName)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jCheckBox3))
+                        .addComponent(textFieldFileName))
+                    .addComponent(checkBoxHiddenFiles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFileFiltersLayout.createSequentialGroup()
-                        .addComponent(jCheckBox5)
+                        .addComponent(checkboxRegex)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jTextField2))
+                    .addComponent(textfieldRegex))
                 .addContainerGap())
         );
         panelFileFiltersLayout.setVerticalGroup(
@@ -730,19 +764,19 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lableExt)
                             .addComponent(radiobuttonAll)
-                            .addComponent(jCheckBox3)
-                            .addComponent(jCheckBox5))
+                            .addComponent(checkBoxHiddenFiles)
+                            .addComponent(checkboxRegex))
                         .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(panelFileFiltersLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panelFileFiltersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(radioButtonOther)
                                     .addComponent(textFieldExt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jCheckBox4)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(checkboxFileName)
+                                    .addComponent(textFieldFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFileFiltersLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(textfieldRegex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(2, 2, 2))))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -931,16 +965,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Source Encoding");
 
-        jComboBox1.setEditable(true);
-        Map<String, Charset> availableCharsets = Charset.availableCharsets();
-        for(String s : availableCharsets.keySet()){
-            jComboBox1.addItem(s);
-        }
-        //jComboBox1.addPopupMenuListener(new BoundsPopupMenuListener(true,false));
-        jComboBox1.setPrototypeDisplayValue("ISO-0000");
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        comboboxSourceEncoding.setPrototypeDisplayValue("ISO-0000");
+        setComboboxEncoding(comboboxSourceEncoding, "Select...");
+        comboboxSourceEncoding.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                comboboxSourceEncodingActionPerformed(evt);
             }
         });
 
@@ -948,17 +977,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel3.setText("Target Encoding");
 
-        jComboBox3.setEditable(true);
-        for(String s : availableCharsets.keySet()){
-            jComboBox1.addItem(s);
-        }
-        jComboBox1.addPopupMenuListener(new BoundsPopupMenuListener(true,false));
-        jComboBox1.setPrototypeDisplayValue("ISO-0000");
-        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+        comboboxTargetEncoding.setPrototypeDisplayValue("ISO-0000");
+        setComboboxEncoding(comboboxTargetEncoding, null);
+        comboboxTargetEncoding.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox3ActionPerformed(evt);
+                comboboxTargetEncodingActionPerformed(evt);
             }
         });
+        comboboxTargetEncoding.setSelectedItem((Object) "UTF-8");
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -974,17 +1000,18 @@ public class MainFrame extends javax.swing.JFrame {
                                 .addContainerGap()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel3)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(25, 25, 25)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 39, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel3))
+                                .addGap(0, 41, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comboboxSourceEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(comboboxTargetEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -997,21 +1024,16 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(comboboxSourceEncoding, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(comboboxTargetEncoding, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 12, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-
-        AutoCompletion.enable(jComboBox1);
-        AutoCompletion.enable(jComboBox1);
-        jComboBox1.setPrototypeDisplayValue(jComboBox1.getItemAt(0));
-        jComboBox1.setUI(new FlatComboBoxUI());
 
         buttonDecode.setFont(new java.awt.Font("맑은 고딕", 1, 24)); // NOI18N
         buttonDecode.setText("Decode");
@@ -1021,16 +1043,42 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Choose...");
+        textfieldTargetfolder.setText("C:\\Users\\Default\\Desktop\\decoded_files");
+        textfieldTargetfolder.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                textfieldTargetfolderFocusLost(evt);
+            }
+        });
+        textfieldTargetfolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textfieldTargetfolderActionPerformed(evt);
+            }
+        });
 
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Create copies at");
+        buttonChoosetarget.setText("Choose...");
+        buttonChoosetarget.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonChoosetargetActionPerformed(evt);
+            }
+        });
 
-        jRadioButton2.setText("Overwrite all");
+        buttongroupTargetfolder.add(radiobuttonTargetfolder);
+        radiobuttonTargetfolder.setSelected(true);
+        radiobuttonTargetfolder.setText("Create copies at");
+        radiobuttonTargetfolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiobuttonTargetfolderActionPerformed(evt);
+            }
+        });
 
-        jRadioButton3.setText("Add BOM");
-
-        jRadioButton4.setText("Remove BOM");
+        buttongroupTargetfolder.add(radiobuttonOverwriteall);
+        radiobuttonOverwriteall.setText("Overwrite all");
+        radiobuttonOverwriteall.setToolTipText("");
+        radiobuttonOverwriteall.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiobuttonOverwriteallActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -1039,41 +1087,33 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jRadioButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jRadioButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
-                            .addComponent(jRadioButton2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton3, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addContainerGap())))
+                        .addComponent(textfieldTargetfolder, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonChoosetarget))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(radiobuttonTargetfolder)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radiobuttonOverwriteall)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jRadioButton1))
+                    .addComponent(radiobuttonTargetfolder)
+                    .addComponent(radiobuttonOverwriteall))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jRadioButton3)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton4)))
+                    .addComponent(buttonChoosetarget)
+                    .addComponent(textfieldTargetfolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(buttonDecode, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1311,8 +1351,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel17.setText("With:");
 
-        jCheckBox1.setText("Regex");
-
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -1328,9 +1366,7 @@ public class MainFrame extends javax.swing.JFrame {
                                     .addComponent(jRadioButton9))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jRadioButton10)
-                                    .addComponent(jCheckBox1))
+                                .addComponent(jRadioButton10)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel8Layout.createSequentialGroup()
@@ -1364,9 +1400,7 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(jRadioButton10)
                             .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jCheckBox1))
+                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1534,18 +1568,27 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void textFieldExtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldExtActionPerformed
         radioButtonOther.requestFocus();
+        radioButtonOther.setSelected(true);
+        fileSelect.setFilterExt(textFieldExt.getText());
+        updateTable();
     }//GEN-LAST:event_textFieldExtActionPerformed
 
-    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox5ActionPerformed
+    private void checkboxRegexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkboxRegexActionPerformed
+        if(checkboxRegex.isSelected()) {
+            textfieldRegex.requestFocus();
+            fileSelect.setFilterRegex(textfieldRegex.getText());
+        } else {
+            fileSelect.setFilterRegex(".*");
+        }
+        updateTable();
+    }//GEN-LAST:event_checkboxRegexActionPerformed
 
-    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox3ActionPerformed
+    private void comboboxTargetEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxTargetEncodingActionPerformed
+        fileDecoder.setTargetCharset(Charset.forName((String)comboboxTargetEncoding.getSelectedItem()));
+    }//GEN-LAST:event_comboboxTargetEncodingActionPerformed
 
     private void buttonDecodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDecodeActionPerformed
-        // TODO add your handling code here:
+         
     }//GEN-LAST:event_buttonDecodeActionPerformed
 
     private void buttonSelectEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSelectEncodingActionPerformed
@@ -1563,9 +1606,10 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton13ActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    private void comboboxSourceEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxSourceEncodingActionPerformed
+        comboboxSourceEncoding.removeItemAt(0);
+        fileDecoder.setSourceCharset(Charset.forName((String)comboboxSourceEncoding.getSelectedItem()));
+    }//GEN-LAST:event_comboboxSourceEncodingActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
@@ -1579,19 +1623,118 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonSelectAllActionPerformed
 
     private void radiobuttonAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonAllActionPerformed
-//        fileSelect.setFilterExt("");
-        
+        fileSelect.setFilterExt("");
+        updateTable();
     }//GEN-LAST:event_radiobuttonAllActionPerformed
 
     private void radioButtonOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioButtonOtherActionPerformed
         textFieldExt.requestFocus();
-//        fileSelect.setFilterExt("txt");
+        fileSelect.setFilterExt(textFieldExt.getText());
+        updateTable();
     }//GEN-LAST:event_radioButtonOtherActionPerformed
-    
+
+    private void textFieldExtFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldExtFocusGained
+        textFieldExt.selectAll();
+    }//GEN-LAST:event_textFieldExtFocusGained
+
+    private void checkBoxHiddenFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxHiddenFilesActionPerformed
+        boolean hidden = checkBoxHiddenFiles.isSelected();
+        fileSelect.setFilterHidden(hidden);
+        updateTable();
+    }//GEN-LAST:event_checkBoxHiddenFilesActionPerformed
+
+    private void checkboxFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkboxFileNameActionPerformed
+        textFieldFileName.requestFocus();
+        String text = checkboxFileName.isSelected() ? textFieldFileName.getText() : "";
+        fileSelect.setFilterName(text);
+        updateTable();
+    }//GEN-LAST:event_checkboxFileNameActionPerformed
+
+    private void textFieldFileNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldFileNameFocusGained
+        textFieldFileName.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+            private void update() {
+                if(checkboxFileName.isSelected()){
+                    fileSelect.setFilterName(textFieldFileName.getText());
+                updateTable();
+                }
+            }
+        });
+    }//GEN-LAST:event_textFieldFileNameFocusGained
+
+    private void textFieldFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldFileNameActionPerformed
+        checkboxFileName.requestFocus();
+        checkboxFileName.setSelected(true);
+    }//GEN-LAST:event_textFieldFileNameActionPerformed
+
+    private void textfieldRegexFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textfieldRegexFocusGained
+        textfieldRegex.selectAll();
+    }//GEN-LAST:event_textfieldRegexFocusGained
+
+    private void textfieldRegexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textfieldRegexActionPerformed
+        checkboxRegex.setSelected(true);
+        checkboxRegex.requestFocus();
+        fileSelect.setFilterRegex(textfieldRegex.getText());
+        updateTable();
+    }//GEN-LAST:event_textfieldRegexActionPerformed
+
+    private void radiobuttonOverwriteallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonOverwriteallActionPerformed
+        if(!radiobuttonOverwriteall.isSelected()) {
+            fileDecoder.setOverwrite(false);
+            return;
+        }
+        if(!textfieldTargetfolder.isEnabled()) return;
+        String msg = "Decoded files will overwrite original files.\nNon-text files may be damaged in the process.\nConfirm?";
+        int input = JOptionPane.showConfirmDialog(null, msg, "Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        if(input == JOptionPane.OK_OPTION) {
+            fileDecoder.setOverwrite(true);
+            textfieldTargetfolder.setEnabled(false);
+            buttonChoosetarget.setEnabled(false);
+        } else {
+            radiobuttonOverwriteall.setSelected(false);
+            radiobuttonTargetfolder.setSelected(true);
+        }
+    }//GEN-LAST:event_radiobuttonOverwriteallActionPerformed
+
+    private void textfieldTargetfolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textfieldTargetfolderActionPerformed
+        radiobuttonTargetfolder.requestFocus();
+    }//GEN-LAST:event_textfieldTargetfolderActionPerformed
+
+    private void radiobuttonTargetfolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonTargetfolderActionPerformed
+        textfieldTargetfolder.setEnabled(true);
+        buttonChoosetarget.setEnabled(true);
+        fileDecoder.setTargetFolder(new File(textfieldTargetfolder.getText()));
+    }//GEN-LAST:event_radiobuttonTargetfolderActionPerformed
+
+    private void textfieldTargetfolderFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textfieldTargetfolderFocusLost
+        fileDecoder.setTargetFolder(new File(textfieldTargetfolder.getText()));
+    }//GEN-LAST:event_textfieldTargetfolderFocusLost
+
+    private void buttonChoosetargetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChoosetargetActionPerformed
+        for(File f : getFilesFromFilechooser(false, JFileChooser.DIRECTORIES_ONLY)) {
+            textfieldTargetfolder.setText(f.getAbsolutePath());
+            fileDecoder.setTargetFolder(f);
+        }
+    }//GEN-LAST:event_buttonChoosetargetActionPerformed
+
     // </editor-fold>
     
-    private void updateTextfield(JTextField textfield) {
-        
+    private void setComboboxEncoding(JComboBox box, String defaulttext) {
+        if(defaulttext!=null) box.addItem(defaulttext);
+        fileDecoder.getAvailableCharsets().keySet().forEach(e -> box.addItem(e));
     }
     
     private void updateSelectAllButton() {
@@ -1609,25 +1752,25 @@ public class MainFrame extends javax.swing.JFrame {
     
     private void removeSelectedRows() {
         HashSet<File> files = new HashSet<>();
+        int rownum = tableFiles.getRowCount();
         for(int i : tableFiles.getSelectedRows()){
             files.add(new File((String)tableFiles.getValueAt(i, 0)));
+            rownum = i < rownum ? i : rownum;
         }
         removeFiles(files);
-        int rowCount = tableFiles.getRowCount();
-        if(rowCount==0) return;
-        tableFiles.setRowSelectionInterval(rowCount-1, rowCount-1);
-        
+        if(rownum==0) return;
+        tableFiles.setRowSelectionInterval(rownum-1, rownum-1);
     }
     
     private HashSet<File> getFilesFromFilechooser(boolean multiSelect, int mode) {
         fileChooser.setMultiSelectionEnabled(multiSelect);
         fileChooser.setFileSelectionMode(mode);
+        HashSet<File> set = new HashSet();
         if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-            HashSet<File> set = new HashSet<>();
             set.addAll(Set.of(fileChooser.getSelectedFiles()));
-            return set;
+            if(!multiSelect) set.add(fileChooser.getSelectedFile());
         }
-        return null;
+        return set;
     }
     
     private void updateCards() {
@@ -1743,7 +1886,20 @@ public class MainFrame extends javax.swing.JFrame {
         updateTable();
     }
     
+    private void initFileDecoder() {
+        fileDecoder = new FileDecoder();
+        fileDecoder.setOverwrite(false);
+        fileDecoder.setTargetCharset(Charset.forName("UTF-8"));
+        fileDecoder.setTargetFolder(new File("C:\\Users\\Default\\Desktop\\decoded_files"));
+    }
     
+    private void initFileSelect() {
+        fileSelect = new FileSelect();
+        fileSelect.setFilterExt("");
+        fileSelect.setFilterHidden(true);
+        fileSelect.setFilterName("");
+        fileSelect.setFilterRegex(".*");
+    }
         
     /**
      * @param args the command line arguments
@@ -1751,6 +1907,7 @@ public class MainFrame extends javax.swing.JFrame {
 //<editor-fold defaultstate="collapsed" desc="Variable declaration">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonBrowseFile;
+    private javax.swing.JButton buttonChoosetarget;
     private javax.swing.JButton buttonDecode;
     private javax.swing.JButton buttonDecode1;
     private javax.swing.JButton buttonOF;
@@ -1759,12 +1916,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox buttonSelectAll;
     private javax.swing.JButton buttonSelectEncoding;
     private javax.swing.ButtonGroup buttongroupExt;
+    private javax.swing.ButtonGroup buttongroupTargetfolder;
+    private javax.swing.JCheckBox checkBoxHiddenFiles;
+    private javax.swing.JCheckBox checkboxFileName;
+    private javax.swing.JCheckBox checkboxRegex;
+    private javax.swing.JComboBox<String> comboboxSourceEncoding;
+    private javax.swing.JComboBox<String> comboboxTargetEncoding;
     private javax.swing.JDialog dialogAuto;
     private javax.swing.JDialog dialogBrute;
     private javax.swing.JDialog dialogSearchResult;
     private javax.swing.JDialog dialogSelectEncoding;
     private javax.swing.JFileChooser fileChooser;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
@@ -1782,13 +1944,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1813,7 +1969,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
@@ -1824,13 +1979,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton10;
     private javax.swing.JRadioButton jRadioButton11;
     private javax.swing.JRadioButton jRadioButton12;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JRadioButton jRadioButton7;
@@ -1850,9 +2001,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
@@ -1875,6 +2023,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel panelFunctions;
     private javax.swing.JRadioButton radioButtonOther;
     private javax.swing.JRadioButton radiobuttonAll;
+    private javax.swing.JRadioButton radiobuttonOverwriteall;
+    private javax.swing.JRadioButton radiobuttonTargetfolder;
     private javax.swing.JPanel subPanelDecode;
     private javax.swing.JPanel subPanelDetectEncoding;
     private javax.swing.JPanel subPanelDragDrop;
@@ -1886,9 +2036,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTable tableFiles;
     private javax.swing.JTable tableFiles1;
     private javax.swing.JTextField textFieldExt;
+    private javax.swing.JTextField textFieldFileName;
+    private javax.swing.JTextField textfieldRegex;
+    private javax.swing.JTextField textfieldTargetfolder;
     // End of variables declaration//GEN-END:variables
     
 // </editor-fold>
     FileSelect fileSelect;
+    FileDecoder fileDecoder;
 }
 
