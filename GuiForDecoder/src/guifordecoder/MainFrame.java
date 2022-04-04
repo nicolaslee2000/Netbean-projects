@@ -3,6 +3,7 @@ package guifordecoder;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -16,18 +17,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -42,6 +48,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initFileSelect();
         initFileDecoder();
+        initFileEncodingDetector();
+        initFileHandler();
         initComponents();
     }
 
@@ -59,44 +67,37 @@ public class MainFrame extends javax.swing.JFrame {
         dialogSelectEncoding = new javax.swing.JDialog();
 
         jPanel4 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableEncoding = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jComboBox4 = new javax.swing.JComboBox<>();
-        jButton7 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
         dialogAuto = new javax.swing.JDialog();
         jPanel5 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        labelDetectedencoding = new javax.swing.JLabel();
         jButton8 = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        textareaDetectedencoding = new javax.swing.JTextArea();
         jLabel11 = new javax.swing.JLabel();
-        jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         dialogBrute = new javax.swing.JDialog();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        textareaBrute = new javax.swing.JTextArea();
         jButton13 = new javax.swing.JButton();
         dialogSearchResult = new javax.swing.JDialog();
         jPanel10 = new javax.swing.JPanel();
         jButton15 = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
+        labelFilescontaining = new javax.swing.JLabel();
         subPanelFilesScroll1 = new javax.swing.JScrollPane();
         tableFiles1 = new javax.swing.JTable();
         jButton16 = new javax.swing.JButton();
-        jTextField9 = new javax.swing.JTextField();
-        jButton17 = new javax.swing.JButton();
-        jLabel21 = new javax.swing.JLabel();
-        jButton18 = new javax.swing.JButton();
         jMenuItem1 = new javax.swing.JMenuItem();
         buttongroupTargetfolder = new javax.swing.ButtonGroup();
+        buttongroupDetectencoding = new javax.swing.ButtonGroup();
+        buttongroupFileext = new javax.swing.ButtonGroup();
+        buttongroupRemanefiles = new javax.swing.ButtonGroup();
+        buttongroupSearchfilecontent = new javax.swing.ButtonGroup();
         panelFiles = new javax.swing.JPanel();
         subPanelTool = new javax.swing.JPanel();
         buttonOF = new javax.swing.JButton();
@@ -145,79 +146,70 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         buttonSelectEncoding = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jRadioButton6 = new javax.swing.JRadioButton();
+        buttonChoosesample = new javax.swing.JButton();
+        labelSamplefile = new javax.swing.JLabel();
+        radioAuto = new javax.swing.JRadioButton();
+        radioBrute = new javax.swing.JRadioButton();
         jSeparator3 = new javax.swing.JSeparator();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
-        buttonDecode1 = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        buttonDetectencoding = new javax.swing.JButton();
+        labelSamplesize = new javax.swing.JLabel();
+        labelChoosesample = new javax.swing.JLabel();
+        textfieldSamplesize = new JFormattedTextField(setNumberformatter(textfieldSamplesize));
+        jScrollPane6 = new javax.swing.JScrollPane();
+        textareaSelectedencodings = new javax.swing.JTextArea();
         subPanelFileHandling = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jRadioButton7 = new javax.swing.JRadioButton();
-        jRadioButton8 = new javax.swing.JRadioButton();
-        jTextField5 = new javax.swing.JTextField();
+        radiobuttonOtherChangeExt = new javax.swing.JRadioButton();
+        textfieldChangeext = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jButton9 = new javax.swing.JButton();
+        textfieldTargetChangeExt = new javax.swing.JTextField();
+        buttonChangeFileExt = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JSeparator();
         jPanel8 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        jRadioButton9 = new javax.swing.JRadioButton();
-        jRadioButton10 = new javax.swing.JRadioButton();
-        jTextField7 = new javax.swing.JTextField();
+        radiobuttonRenameall = new javax.swing.JRadioButton();
+        radiobuttonReplace = new javax.swing.JRadioButton();
+        textfieldRenamereplace = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        textfieldRenametarget = new javax.swing.JTextField();
         jSeparator5 = new javax.swing.JSeparator();
         jButton12 = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
+        checkboxRenameregex = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jButton14 = new javax.swing.JButton();
         jLabel19 = new javax.swing.JLabel();
         jRadioButton11 = new javax.swing.JRadioButton();
-        jRadioButton12 = new javax.swing.JRadioButton();
+        radiofilesearchregex = new javax.swing.JRadioButton();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
+        textareaSearchfilecontent = new javax.swing.JTextArea();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
         menuEdit = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
 
-        dialogSelectEncoding.setTitle("Select Encodings");
-        dialogSelectEncoding.setAlwaysOnTop(true);
-        dialogSelectEncoding.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        dialogSelectEncoding.setFocusCycleRoot(false);
-        dialogSelectEncoding.setModal(true);
-        dialogSelectEncoding.setPreferredSize(new java.awt.Dimension(310, 420));
-        dialogSelectEncoding.setSize(new java.awt.Dimension(300, 380));
-        dialogSelectEncoding.setType(java.awt.Window.Type.POPUP);
-
-        jLabel5.setText("Select language:");
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unicode", "Item 2", "Item 3", "Item 4" }));
-        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        fileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                fileChooserActionPerformed(evt);
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        dialogSelectEncoding.setTitle("Select Encodings");
+        dialogSelectEncoding.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        dialogSelectEncoding.setFocusCycleRoot(false);
+        dialogSelectEncoding.setModal(true);
+        dialogSelectEncoding.setPreferredSize(new java.awt.Dimension(310, 500));
+        dialogSelectEncoding.setSize(new java.awt.Dimension(310, 500));
+        dialogSelectEncoding.setType(java.awt.Window.Type.POPUP);
+
+        tableEncoding.setAutoCreateRowSorter(true);
+        tableEncoding.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Name", "Select"
@@ -238,27 +230,28 @@ public class MainFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setMinWidth(50);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(30);
-            jTable1.getColumnModel().getColumn(1).setMaxWidth(50);
+        jScrollPane1.setViewportView(tableEncoding);
+        if (tableEncoding.getColumnModel().getColumnCount() > 0) {
+            tableEncoding.getColumnModel().getColumn(0).setResizable(false);
+            tableEncoding.getColumnModel().getColumn(1).setMinWidth(50);
+            tableEncoding.getColumnModel().getColumn(1).setPreferredWidth(30);
+            tableEncoding.getColumnModel().getColumn(1).setMaxWidth(50);
         }
+        setTableEncoding();
 
         jButton3.setText("OK");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Cancel");
-
-        jButton6.setText("Add:");
-
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jButton7.setText("Remove all");
-
-        jLabel7.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/OptionPaneWarningIcon.png"))); // NOI18N
-        jLabel7.setText("<html> It is recommended that you choose less <br\\>than 10 encodings for auto decoding <html\\>");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -268,42 +261,19 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton7))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 148, Short.MAX_VALUE)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jLabel7))
+                        .addComponent(jButton4)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
@@ -332,21 +302,24 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel9.setText("Suggested source Encoding:");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel10.setText("jLabel10");
+        labelDetectedencoding.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        labelDetectedencoding.setText("jLabel10");
 
         jButton8.setText("help");
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        textareaDetectedencoding.setEditable(false);
+        textareaDetectedencoding.setColumns(20);
+        textareaDetectedencoding.setRows(5);
+        jScrollPane3.setViewportView(textareaDetectedencoding);
 
         jLabel11.setText("Sample Text");
 
-        jButton10.setText("Choose as source");
-
         jButton11.setText("OK");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -361,16 +334,14 @@ public class MainFrame extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton10)
+                                .addComponent(labelDetectedencoding)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 104, Short.MAX_VALUE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -383,9 +354,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jLabel10)
-                    .addComponent(jButton8)
-                    .addComponent(jButton10))
+                    .addComponent(labelDetectedencoding)
+                    .addComponent(jButton8))
                 .addGap(7, 7, 7)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -406,18 +376,18 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        dialogAuto.getAccessibleContext().setAccessibleParent(this);
+        dialogAuto.pack();
+        dialogAuto.setLocationRelativeTo(null);
 
         dialogBrute.setTitle("Result");
         dialogBrute.setAlwaysOnTop(true);
         dialogBrute.setModal(true);
         dialogBrute.setType(java.awt.Window.Type.POPUP);
 
-        jTextArea2.setEditable(false);
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jTextArea2.setText("package com.javalec.basic; // 주의 : 자동으로 작성되는 이 부분은 건들지 마세요!\n//new comment\n// 첫 자바 코드를 작성해봅시다!\n\n// 1. 소스 파일 만들기 ( .java)\n//  형식 : \n//\tpublic class 클래스명 {\n//\n// \t\tpublic static void main(String[] args){\n//\t\t\t명령문1;\n//\t\t\t명령문2;\n//\t\t\t명령문3;\t\n//\t\t\t...\n//\t\t}\n//\t}\n\n//\t< 소스파일 작성 시 유의사항 >\n//\t1) 클래스명과 소스파일명은 동일하게, 대소문자도 똑같이 작성해야 한다.\n//  2) 메모장으로 작성할 경우, 저장 시 반드시 파일 형식은 '모든 파일'로 선택해야 하며, \n//     확장자는 .java로 한다. \n//\t\t('모든 파일'로 선택하지 않을 경우, 파일명.java.txt 라는 텍스트 파일이 되므로 주의하자!)\n//  3) 이름들(소스파일, 클래스)은 띄어쓰기를 할 수 없다.\n//  4) 클래스명은 보통 맨 앞 글자를 대문자로 한다. (자바의 규칙 중 하나이다.)\n//\t5) 만약 소스코드를 수정했다면 이를 재저장해서 갱신해야 한다.\n\n// 2. 컴파일 하기 ( .class 파일 생성하기)\n//  형식 : (cmd에서) javac 소스파일명.java\n//  e.g. javac MyFirstJava.java\n//\n// < 컴파일 시 주의점 >\n//  - javac나 java 등, 자바개발에 사용되는 명령들을 \n//    어느 위치에서든 실행하고자 한다면 \n//    환경 변수 중 'path'에 jdk의 bin 폴더(여기에 java, javac 등의 명령어가 들어있음)가 저장되어있어야 한다.\n//    (안잡혀있으면 cd로 jdk의 bin폴더까지 찾아가서 실행해야 하는 번거로움이 있다.)\n//  - 컴파일은 소스파일 위치에서 실행해야 한다.\n//    명령1. 이동 하기 : cd 폴더명\n//\t\te.g. 현재 위치는 E드라이브고, 목적지는 D드라이브의 myfolder라면\n//\t\t\t ==> D: -> enter -> cd myfolder -> enter\n//    명령2. 현재 위치의 파일,폴더 보기 : dir\n\n//  - 컴파일이 완료되면 아무 것도 없는 공백이 나와야 하고, 어떠한 메세지가 뜬다면 에러가 났음을 의미한다.\n//  - 컴파일 이후에는 해당 자리에 동명의 .class 파일이 생성되어있다. dir로 확인하거나 직접 창을 열어 확인해보면 된다.\n//  - class 파일은 더블클릭해도 실행되거나 읽을 수 없다. 왜냐하면 class 파일은 JVM만 이해할 수 있는 바이트코드로 쓰여져 있는데 \n//    바이트코드는 오직 JVM만 읽을 수 있고 운영체제와 우리는 읽을 수 없다. \n//    우리가 원하는 결과를 보려면 JVM에게 class 파일을 읽어내도록 명령해야 한다.\n//  - 따라서 자바는 class 파일과 JVM이 하나의 프로그램이라고 보면 된다. (아, 물론 JRE도.. ㅠㅠ)\n//    결국 C나 C++ 같이 exe 프로그램이 생성되지 않는다. \n//    굳이! exe로 만들고 싶으면 jsmooth라는 프로그램을 사용하면 된다.. 하지만 아직 사용법을 숙지하기 어려우니 훗날 필요할 때 구글링하길 바란다..\n// 3. 실행하기 (JVM아 출동해!)\n//  형식 : (cmd에서) java 클래스명 \n//  주의 : .class를 쓰지 않는다 ( e.g. java 클래스명.class (X) )\n\n//    참고 : path란, 현재 위치에 상관없이 자유롭게 실행하고자 하는 명령(프로그램)이 있다면 그들이 있는 위치를 저장해두는 특별한 곳이다.\n//\t\t     명령(프로그램)을 실행하도록 했을 때 그 명령(프로그램)이 현재 위치에 없다면, \n//         환경변수 중 path에 적혀있는 경로들을 차례로 뒤져 해당 명령(프로그램)을 찾아서 실행하는 것이 원리이다.\n//         ping이나 ipconfig와 같은 명령도 사실 C:\\Windows\\system32 폴더에 ping.exe, ipconfig.exe로 존재하는데 \n//         C:\\Windows\\system32 폴더가 path에 적혀있기 때문에 \n//         매번 C:\\Windows\\system32\\ping, C:\\Windows\\system32\\ipconfig로 실행할 필요 없이\n//             ping, ipconfig 단 한 단어로 실행할 수 있는 것이다..\n//    \n//       => 우리는 jdk까지의 경로를 JAVA_HOME이라는 변수로 따로 만들고 이에 bin을 붙여 path에 추가했었다.\n//\t\t\t(%JAVA_HOME%\\bin)\n//       => 그럼 jdk의 bin 폴더에 있는 모든 명령어들을 어디서나 자유롭게 호출할 수 있다.\n//          (예전엔 이클립스같은 좋은 프로그램이 없었고 매번 메모장 같은 에디터로 개발을 했기때문에 cmd로 컴파일을 해야했다. \n//           그럴 때마다 매번 경로를 쓰는게 귀찮았기 때문에 하던 작업이다. 오늘날에는 메모장에 개발을 하지 않기 때문에 \n//           이 과정이 이해가 안된다면 지금 말고 먼 훗날 공부하길 추천한다 ㅠㅠ) \n//  \n\n\n\n// 1. 주석이란,\n// 소스파일은 모든 텍스트를 명령으로 인식하기 때문에, 메모를 하고 싶을 때는 반드시 텍스트의 맨 앞에 메모임을 표시해야 합니다. \n// 메모의 정식명칭은 주석(comments)라고 하며, 주석 처리 방법은 2가지가 있습니다.\n// : 한 줄 메모(주석) - 단축키 : (커서 올리거나 드래그) ctrl + shift + c (다시 누르면 주석 해제)\n/* : 구문 메모(선택 주석) */ \n\n// 2. 이클립스에서 소스파일은.. \n// 저장 : ctrl + s \n// 실행 : ctrl + F11\n\n// Test01.java는 Test01이라는 이름의 자바소스파일(.java)를 의미합니다.\n//  우리가 ctrl + F11을 눌러 실행을 시키면\n//  가장 먼저 자바 컴파일러가 Test01.java를 가지고 Test01.class 파일을 생성합니다.\n//  그 다음 JVM이 출동하여 Test01.class를 인터프리팅(실행)합니다. \n//  따라서 프로그램 사용자에게 필요한 것은 JVM과 Test01.class파일이며,\n//  Test01.java가 없어도 Test01.class만 있다면 실행됩니다. (대신 코드내용은 볼 수 없습니다.)\n\npublic class Test01 { // Test01 클래스 영역의 시작\n\t// 3. 클래스 작성 시 주의사항 (외우지 말고 그냥 읽어보세요.)\n\t//  1) public class 클래스명 => 소스파일명, 이 둘은 반드시 같아야합니다. \n\t//  2) 이름 수정을 원할 경우 옆의 package explorer의 소스파일을 우클릭하고 F2를 눌러 수정합니다. (이상한 창이 뜨면 그냥 Ok나  Next 누르세요.) \n\t//  3) 자바는 클래스 기반 언어입니다. 따라서 대부분의 자바 코드는 무조건 클래스 안에서만 작성되어야 합니다. \n\t//    (단, 저기 맨 윗줄의 package 선언과 나중에 배울 import 선언은 제외합니다.)\n\t\n\t\n\tpublic static void main(String[] args) { // 메인 메소드 영역의 시작\n\t// 4. 메인메소드란,\n\t//  자바 프로그램의 시작점과 끝점이 되는 중요한 녀석입니다.\n\t//  프로그램이 실행되면, JVM은 이 메인메소드를 찾는데, 메인메소드가 없으면 실행하지 않습니다.\n\t//  메인메소드의 '{'는 프로그램의 시작, '}'는 프로그램의 끝이라고 생각하면 됩니다.\n\t//  주의 : 메인메소드는 반드시 public static void main(String[] args){...} 입니다.\n\t//       대소문자, 띄어쓰기, 오타에 주의하세요!\n\t//\t주의 : 당분간은 메인 메소드 안에서만 코딩합니다.\n\t\t\n\t\tSystem.out.println(\"Hello!\");\n\t\t// 5. System.out.println( 출력할 데이터 );\n\t\t// 표준 출력 명령인 System.out.println()입니다. 줄여서 sysout이라고도 표현합니다.\n\t\t// 이 명령은 소괄호() 내부의 데이터를 콘솔(cmd창, terminal창, 이클립스에서는 console창)에 출력합니다.\n\t\t// 주의점! 문자열(문자 한 개 이상) 데이터인 경우는 쌍따옴표(\")로 감싸주어야 합니다.\n\t\t\n\t} // 메인 메소드 영역의 끝\n\t// 알고보니 메인메소드 안에는 sysout 한 줄 뿐이었네요.\n\t// 결과적으로는 Hello를 모니터에 출력하는 짧은 프로그램이었습니다.\n\t// 이 메인메소드에는 여러 줄의 코드를 적을 수 있을 뿐만 아니라, 여러 객체(부품)를 가져와 조립해서 사용할 수도 있습니다.\n\t\n} // Test01 클래스 영역의 끝\n\n// 5. 중괄호의 의미?\n// { : 영역의 시작\n// } : 영역의 끝\n// 참고 : 세상 모든 코드의 괄호들은..( '()' '{}' '[]') 반드시 짝꿍이 있어야 합니다!\n\n// 6. 세미콜론(;)의 의미?\n// 명령의 마침표 역할을 합니다. 명령 1개가 종료되었음을 의미합니다. \n// 있어야 할 자리에 세미콜론이 없을 경우 에러가 발생하니 조심하세요.\n\n// 이클립스에서 코드를 작성할 때는 \n// \t1. 프로젝트 만들기\n// \t2. 패키지 만들기(띄어쓰기 안됨. 모두 소문자로, 3번 중첩을 추천 e.g. com.큰이름.작은이름)\n// \t3. 클래스 추가하기(띄어쓰기 안됨. 맨 앞글자 대문자로, 단어 앞마다 대문자로. e.g. MyFirstJava)\n// 순서로 제작하면 됩니다. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        jScrollPane4.setViewportView(jTextArea2);
+        textareaBrute.setEditable(false);
+        textareaBrute.setColumns(20);
+        textareaBrute.setRows(5);
+        jScrollPane4.setViewportView(textareaBrute);
 
         jButton13.setText("OK");
         jButton13.addActionListener(new java.awt.event.ActionListener() {
@@ -460,6 +430,9 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        dialogBrute.pack();
+        dialogBrute.setLocationRelativeTo(null);
+
         dialogSearchResult.setTitle("Result");
         dialogSearchResult.setAlwaysOnTop(true);
         dialogSearchResult.setModal(true);
@@ -472,7 +445,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel20.setText("Files containing : \"asdfasdfasdfdfasd\"");
+        labelFilescontaining.setText("Files containing : \"asdfasdfasdfdfasd\"");
 
         tableFiles1.setAutoCreateRowSorter(true);
         tableFiles1.setModel(new javax.swing.table.DefaultTableModel(
@@ -499,7 +472,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         tableFiles1.setToolTipText("");
-        tableFiles1.setCellSelectionEnabled(true);
         tableFiles1.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tableFiles1.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tableFiles1.setShowGrid(false);
@@ -517,12 +489,11 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         jButton16.setText("Open");
-
-        jButton17.setText("Choose...");
-
-        jLabel21.setText("Create copies at:");
-
-        jButton18.setText("Create copies");
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -534,20 +505,11 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(subPanelFilesScroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton18)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton15))
                     .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(jLabel20)
+                        .addComponent(labelFilescontaining)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton16))
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addComponent(jLabel21)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton17)
-                        .addGap(53, 53, 53)))
+                        .addComponent(jButton16)))
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
@@ -555,19 +517,12 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel20)
+                    .addComponent(labelFilescontaining)
                     .addComponent(jButton16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(subPanelFilesScroll1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton17)
-                    .addComponent(jLabel21))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton15)
-                    .addComponent(jButton18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton15)
                 .addContainerGap())
         );
 
@@ -581,6 +536,9 @@ public class MainFrame extends javax.swing.JFrame {
             dialogSearchResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        dialogSearchResult.pack();
+        dialogSearchResult.setLocationRelativeTo(null);
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -793,7 +751,7 @@ public class MainFrame extends javax.swing.JFrame {
         labelDropFile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelDropFile.setText("Drag&drop files here");
 
-        labelUploadIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/dropfilesicon.png"))); // NOI18N
+        labelUploadIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dropfilesicon.png"))); // NOI18N
 
         labelOr.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         labelOr.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -973,7 +931,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/downarrow.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/downarrow.png"))); // NOI18N
 
         jLabel3.setText("Target Encoding");
 
@@ -995,18 +953,15 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel3))
                                 .addGap(0, 41, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(comboboxSourceEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(comboboxTargetEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(comboboxSourceEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboboxTargetEncoding, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(33, 33, 33)
@@ -1031,7 +986,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(comboboxTargetEncoding, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 12, Short.MAX_VALUE)))
+                        .addGap(0, 18, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -1138,6 +1093,7 @@ public class MainFrame extends javax.swing.JFrame {
         subPanelDetectEncoding.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         buttonSelectEncoding.setText("Select Encodings:");
+        buttonSelectEncoding.setEnabled(false);
         buttonSelectEncoding.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonSelectEncodingActionPerformed(evt);
@@ -1146,37 +1102,54 @@ public class MainFrame extends javax.swing.JFrame {
 
         jButton5.setText("Help");
 
-        jButton2.setText("Choose File:");
-        jButton2.setEnabled(false);
-
-        jLabel8.setText("<html>\nalksjhljkadvjkhadflkjhakldjfkadsjfasdlfjfkdjfkdkfdkjfkdjkfjdkfkdjkfdkfjkdjk <br /> aaaaaaaaaaaaaaaaaaaaa\n");
-        jLabel8.setEnabled(false);
-
-        jRadioButton5.setText("Automatic");
-
-        jRadioButton6.setText("Brute force");
-
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jList1.setEnabled(false);
-        jScrollPane2.setViewportView(jList1);
-
-        buttonDecode1.setFont(new java.awt.Font("맑은 고딕", 1, 24)); // NOI18N
-        buttonDecode1.setText("Test");
-        buttonDecode1.addActionListener(new java.awt.event.ActionListener() {
+        buttonChoosesample.setText("Choose File:");
+        buttonChoosesample.setEnabled(false);
+        buttonChoosesample.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonDecode1ActionPerformed(evt);
+                buttonChoosesampleActionPerformed(evt);
             }
         });
 
-        jLabel6.setText("Sample size:");
-        jLabel6.setEnabled(false);
+        labelSamplefile.setEnabled(false);
 
-        jTextField4.setText("100");
-        jTextField4.setEnabled(false);
+        buttongroupDetectencoding.add(radioAuto);
+        radioAuto.setText("Automatic");
+        radioAuto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioAutoActionPerformed(evt);
+            }
+        });
+
+        buttongroupDetectencoding.add(radioBrute);
+        radioBrute.setText("Brute force");
+        radioBrute.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioBruteActionPerformed(evt);
+            }
+        });
+
+        buttonDetectencoding.setFont(new java.awt.Font("맑은 고딕", 1, 24)); // NOI18N
+        buttonDetectencoding.setText("Test");
+        buttonDetectencoding.setEnabled(false);
+        buttonDetectencoding.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDetectencodingActionPerformed(evt);
+            }
+        });
+
+        labelSamplesize.setText("Sample size:");
+        labelSamplesize.setEnabled(false);
+
+        labelChoosesample.setText("Choose test sample:");
+        labelChoosesample.setEnabled(false);
+
+        textfieldSamplesize.setText("100");
+        textfieldSamplesize.setEnabled(false);
+
+        textareaSelectedencodings.setColumns(10);
+        textareaSelectedencodings.setRows(5);
+        textareaSelectedencodings.setEnabled(false);
+        jScrollPane6.setViewportView(textareaSelectedencodings);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -1187,33 +1160,33 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator3)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(buttonSelectEncoding)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(buttonDecode1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(30, 30, 30)
-                                        .addComponent(jLabel6))
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jButton2)))
+                                    .addComponent(buttonSelectEncoding)
+                                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                        .addGap(44, 44, 44)
+                                        .addComponent(labelChoosesample))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                        .addGap(44, 44, 44)
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(buttonChoosesample)
+                                            .addComponent(labelSamplesize))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                                .addComponent(textfieldSamplesize, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(buttonDetectencoding, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(labelSamplefile, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(radioAuto, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jRadioButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(radioBrute, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1222,29 +1195,34 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton5)
-                    .addComponent(jRadioButton6)
+                    .addComponent(radioAuto)
+                    .addComponent(radioBrute)
                     .addComponent(jButton5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(buttonSelectEncoding)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton2)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(labelChoosesample)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))
+                            .addComponent(buttonChoosesample)
+                            .addComponent(labelSamplefile))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonDecode1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(labelSamplesize)
+                                    .addComponent(textfieldSamplesize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(24, 24, 24))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(buttonDetectencoding, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(buttonSelectEncoding)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout subPanelDetectEncodingLayout = new javax.swing.GroupLayout(subPanelDetectEncoding);
@@ -1265,15 +1243,34 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel12.setText("Change files extensions");
 
+        buttongroupFileext.add(jRadioButton7);
+        jRadioButton7.setSelected(true);
         jRadioButton7.setText("All");
 
-        jRadioButton8.setText("Other:");
+        buttongroupFileext.add(radiobuttonOtherChangeExt);
+        radiobuttonOtherChangeExt.setText("Other:");
+        radiobuttonOtherChangeExt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiobuttonOtherChangeExtActionPerformed(evt);
+            }
+        });
 
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/downarrow.png"))); // NOI18N
+        textfieldChangeext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textfieldChangeextActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/downarrow.png"))); // NOI18N
 
         jLabel14.setText("target:");
 
-        jButton9.setText("Change");
+        buttonChangeFileExt.setText("Change");
+        buttonChangeFileExt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonChangeFileExtActionPerformed(evt);
+            }
+        });
 
         jSeparator4.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -1286,28 +1283,26 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel7Layout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel7Layout.createSequentialGroup()
-                                .addComponent(jRadioButton8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel12)
-                            .addComponent(jRadioButton7))
+                            .addComponent(jRadioButton7)
+                            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                    .addGap(23, 23, 23)
+                                    .addComponent(jLabel14)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(textfieldTargetChangeExt, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                    .addComponent(radiobuttonOtherChangeExt)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(textfieldChangeext, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(28, 28, 28))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                        .addComponent(jButton9)
+                        .addComponent(buttonChangeFileExt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
-        jPanel7Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jTextField5, jTextField6});
-
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
@@ -1320,36 +1315,53 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jRadioButton7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButton8)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(radiobuttonOtherChangeExt)
+                            .addComponent(textfieldChangeext, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(textfieldTargetChangeExt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton9)))
+                        .addComponent(buttonChangeFileExt)))
                 .addContainerGap())
         );
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel15.setText("Rename files");
 
-        jRadioButton9.setText("Rename all(warning");
+        buttongroupRemanefiles.add(radiobuttonRenameall);
+        radiobuttonRenameall.setText("Rename all");
+        radiobuttonRenameall.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiobuttonRenameallActionPerformed(evt);
+            }
+        });
 
-        jRadioButton10.setSelected(true);
-        jRadioButton10.setText("Replace:");
+        buttongroupRemanefiles.add(radiobuttonReplace);
+        radiobuttonReplace.setSelected(true);
+        radiobuttonReplace.setText("Replace:");
+        radiobuttonReplace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radiobuttonReplaceActionPerformed(evt);
+            }
+        });
 
-        jTextField7.setText("regex");
-
-        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/guifordecoder/downarrow.png"))); // NOI18N
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/downarrow.png"))); // NOI18N
 
         jSeparator5.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         jButton12.setText("Rename");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
 
         jLabel17.setText("With:");
+
+        checkboxRenameregex.setText("Regex?");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -1358,30 +1370,25 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel15)
-                                    .addComponent(jRadioButton9))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addComponent(jRadioButton10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel8Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jLabel16)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jTextField7)))))
+                        .addComponent(radiobuttonReplace)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textfieldRenamereplace))
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton12, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField8)))))
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(textfieldRenametarget))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGap(89, 89, 89)
+                        .addComponent(jButton12))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(checkboxRenameregex)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel15))
+                    .addComponent(radiobuttonRenameall))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1394,18 +1401,20 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton9)
+                        .addComponent(radiobuttonRenameall)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jRadioButton10)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(radiobuttonReplace)
+                            .addComponent(textfieldRenamereplace, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(checkboxRenameregex))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textfieldRenametarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel17))
-                        .addGap(9, 9, 9)
+                        .addGap(15, 15, 15)
                         .addComponent(jButton12))
                     .addComponent(jSeparator5))
                 .addContainerGap())
@@ -1415,19 +1424,27 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel18.setText("Search file content");
 
         jButton14.setText("Search");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
 
         jLabel19.setText("Search by:");
 
+        buttongroupSearchfilecontent.add(jRadioButton11);
+        jRadioButton11.setSelected(true);
         jRadioButton11.setText("Text");
 
-        jRadioButton12.setText("Regex");
+        buttongroupSearchfilecontent.add(radiofilesearchregex);
+        radiofilesearchregex.setText("Regex");
 
-        jTextArea3.setColumns(10);
-        jTextArea3.setLineWrap(true);
-        jTextArea3.setRows(2);
-        jTextArea3.setTabSize(3);
-        jTextArea3.setWrapStyleWord(true);
-        jScrollPane5.setViewportView(jTextArea3);
+        textareaSearchfilecontent.setColumns(10);
+        textareaSearchfilecontent.setLineWrap(true);
+        textareaSearchfilecontent.setRows(2);
+        textareaSearchfilecontent.setTabSize(3);
+        textareaSearchfilecontent.setWrapStyleWord(true);
+        jScrollPane5.setViewportView(textareaSearchfilecontent);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -1441,7 +1458,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel9Layout.createSequentialGroup()
-                                .addComponent(jRadioButton12)
+                                .addComponent(radiofilesearchregex)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jRadioButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
@@ -1450,7 +1467,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel18)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
                         .addGap(11, 11, 11)))
                 .addContainerGap())
         );
@@ -1464,7 +1481,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel19)
                     .addComponent(jRadioButton11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton12)
+                .addComponent(radiofilesearchregex)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane5)
                 .addGap(12, 12, 12)
@@ -1479,15 +1496,16 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(subPanelFileHandlingLayout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         subPanelFileHandlingLayout.setVerticalGroup(
             subPanelFileHandlingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("File Handling", subPanelFileHandling);
@@ -1498,15 +1516,14 @@ public class MainFrame extends javax.swing.JFrame {
             panelFunctionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFunctionsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
         panelFunctionsLayout.setVerticalGroup(
             panelFunctionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFunctionsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(tabbedPane))
         );
 
         menuFile.setText("File");
@@ -1595,15 +1612,12 @@ public class MainFrame extends javax.swing.JFrame {
         dialogSelectEncoding.setVisible(true);
     }//GEN-LAST:event_buttonSelectEncodingActionPerformed
 
-    private void buttonDecode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDecode1ActionPerformed
-    }//GEN-LAST:event_buttonDecode1ActionPerformed
-
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ActionPerformed
+    private void buttonDetectencodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDetectencodingActionPerformed
+        setDetectencodingButton();
+    }//GEN-LAST:event_buttonDetectencodingActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
-        // TODO add your handling code here:
+        dialogBrute.setVisible(false);
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void comboboxSourceEncodingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboboxSourceEncodingActionPerformed
@@ -1612,7 +1626,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_comboboxSourceEncodingActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
-        // TODO add your handling code here:
+        dialogSearchResult.setVisible(false);
+        DefaultTableModel model = (DefaultTableModel) tableFiles1.getModel();
+        while(model.getRowCount()>0) {
+            model.removeRow(0);
+        }
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void buttonSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSelectAllActionPerformed
@@ -1724,35 +1742,275 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_textfieldTargetfolderFocusLost
 
     private void buttonChoosetargetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChoosetargetActionPerformed
+        fileChooser.setCurrentDirectory(new File(textfieldTargetfolder.getText()));
         for(File f : getFilesFromFilechooser(false, JFileChooser.DIRECTORIES_ONLY)) {
             textfieldTargetfolder.setText(f.getAbsolutePath());
             fileDecoder.setTargetFolder(f);
         }
     }//GEN-LAST:event_buttonChoosetargetActionPerformed
 
+    private void radioAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioAutoActionPerformed
+        enableDetectencoding(true);
+        fileDetector.setBruteforce(false);
+    }//GEN-LAST:event_radioAutoActionPerformed
+
+    private void radioBruteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioBruteActionPerformed
+       enableDetectencoding(true);
+       fileDetector.setBruteforce(true);
+    }//GEN-LAST:event_radioBruteActionPerformed
+
+    private void buttonChoosesampleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChoosesampleActionPerformed
+        fileChooser.setCurrentDirectory(fileDetector.getSampleFile());
+        for(File f : getFilesFromFilechooser(false, JFileChooser.FILES_ONLY)){
+            labelSamplefile.setText(f.getAbsolutePath());
+            fileDetector.setSampleFile(f);
+        }
+    }//GEN-LAST:event_buttonChoosesampleActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        HashSet<Charset> cs = new HashSet<>();
+        for(int i =0; i < tableEncoding.getRowCount(); i++) {
+            if((boolean)tableEncoding.getValueAt(i, 1)) cs.add(Charset.forName((String)tableEncoding.getValueAt(i, 0)));
+        }
+        if(cs.size()>10&&!fileDetector.isBruteforce()) {
+            String msg = "For auto-detection, it is recommended that you select less than 10 encodings. Confirm?";
+            int input = JOptionPane.showConfirmDialog(null, msg, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            if(input == JOptionPane.CANCEL_OPTION) return;
+        }
+        fileDetector.setCharsetsToBeTested(cs);
+        String str = "";
+        for(Charset c : fileDetector.getCharsetsToBeTested()) {
+            str += c.displayName() + "\n";
+        }
+        textareaSelectedencodings.setText(str);
+        dialogSelectEncoding.setVisible(false);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        dialogSelectEncoding.setVisible(false);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        dialogAuto.setVisible(false);
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void radiobuttonOtherChangeExtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonOtherChangeExtActionPerformed
+        textfieldChangeext.requestFocus();
+    }//GEN-LAST:event_radiobuttonOtherChangeExtActionPerformed
+
+    private void textfieldChangeextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textfieldChangeextActionPerformed
+        radioButtonOther.requestFocus();
+        radioButtonOther.setSelected(true);
+    }//GEN-LAST:event_textfieldChangeextActionPerformed
+
+    private void buttonChangeFileExtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChangeFileExtActionPerformed
+        setChangeFileExtButton();
+    }//GEN-LAST:event_buttonChangeFileExtActionPerformed
+
+    private void radiobuttonRenameallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonRenameallActionPerformed
+        String msg = "If more than one file of same name exists,\nonly first file will be renamed.\nConfirm?";
+        int input = JOptionPane.showConfirmDialog(null, msg, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        if(input == JOptionPane.CANCEL_OPTION) {
+            radiobuttonReplace.setSelected(true);
+            return;
+        }
+        textfieldRenamereplace.setEnabled(false);
+        checkboxRenameregex.setEnabled(false);
+    }//GEN-LAST:event_radiobuttonRenameallActionPerformed
+
+    private void radiobuttonReplaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiobuttonReplaceActionPerformed
+        textfieldRenamereplace.requestFocus();
+        textfieldRenamereplace.setEnabled(true);
+        checkboxRenameregex.setEnabled(true);
+    }//GEN-LAST:event_radiobuttonReplaceActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        setRenameButton();
+    }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        setSearchfilecontentButton();
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void fileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fileChooserActionPerformed
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        HashSet<File> files = new HashSet();
+        for(int i = 0; i < tableFiles1.getRowCount(); i++) {
+            if((boolean)tableFiles1.getValueAt(i, 4))
+                files.add(new File((String)tableFiles.getValueAt(i, 0)));
+        }
+        Desktop desktop = Desktop.getDesktop();
+        for(File f : files) {
+            if(f.exists()&&Desktop.isDesktopSupported()) {
+                try {
+                    desktop.open(f);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "UNSUPPORTED", null, JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButton16ActionPerformed
+
     // </editor-fold>
     
-    private void setDecodeButton() {
-        HashSet<File> files = new HashSet();
+    private void setSearchfilecontentButton(){
+        if(textareaSearchfilecontent.getText().isBlank()) {
+            JOptionPane.showMessageDialog(null, "Fill in text to search!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        labelFilescontaining.setText("Files containing: " + textareaSearchfilecontent.getText().strip());
+        DefaultTableModel model = (DefaultTableModel) tableFiles1.getModel();
+        HashSet<File> files  = new HashSet();
+        try {
+            files.addAll(getSelectedFiles());
+        } catch(NullPointerException e) {
+            return;
+        }
+        HashSet<File> resultfiles = fileHandler.searchFilecontent(files, textareaSearchfilecontent.getText().strip(), radiofilesearchregex.isSelected());
+        for(File f : resultfiles){
+            DateFormat df = new SimpleDateFormat("dd/MM/yy  HH:mm:ss");
+                String name = f.getAbsolutePath();
+                String type = f.getAbsolutePath().substring(f.getAbsolutePath().lastIndexOf("."));
+                //shouldve chosen nio
+                String date = df.format(f.lastModified());
+                String size = f.length() < 1000 && f.length() != 0 ? 1 + "KB"  :  String.valueOf(f.length()/1000l) + "KB";
+                model.addRow(new Object[]{name, type, date, size, true});
+        }
+        
+        dialogSearchResult.setVisible(true);
+    }
+    
+    private void setRenameButton() {
+        if(radiobuttonReplace.isSelected()&&textfieldRenamereplace.getText().isBlank()){
+            JOptionPane.showMessageDialog(null, "Fill in what you want to replace with!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if(textfieldRenametarget.getText().isBlank()) {
+            JOptionPane.showMessageDialog(null, "Fill in target name!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            System.out.println("TEXTFIELDREPLACE"+textfieldRenamereplace.getText().strip());
+            fileHandler.rename(getSelectedFiles(), radiobuttonRenameall.isSelected() ? null : textfieldRenamereplace.getText().strip(), textfieldRenametarget.getText().strip(), checkboxRenameregex.isSelected());
+        } catch(NullPointerException e) {
+            return;
+        }
+        JOptionPane.showMessageDialog(null, "Complete!", "Complete!", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void setChangeFileExtButton() {
+        if(textfieldChangeext.getText().strip().equals("")&&radiobuttonOtherChangeExt.isSelected() || textfieldTargetChangeExt.getText().strip().equals("")) {
+            JOptionPane.showMessageDialog(null, "Choose extension!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        HashSet<File> files = new HashSet<>();
+        HashSet<File> tempf = new HashSet();
+        try {
+            files.addAll(getSelectedFiles());
+        } catch(NullPointerException e) {
+            return;
+        }
+        for(File f : files){
+            if(!f.getName().contains("." + textfieldChangeext.getText().strip()))
+                tempf.add(f);
+        }
+        files.removeAll(tempf);
+        System.out.println("FILEs"+files);
+        System.out.println("ext"+textfieldTargetChangeExt.getText().strip());
+        fileHandler.changeExtension(files, textfieldTargetChangeExt.getText().strip());
+         JOptionPane.showMessageDialog(null, "Complete!", "Complete!", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private HashSet<File> getSelectedFiles() {
+        HashSet<File> files = new HashSet<>();
         for(int i = 0; i < tableFiles.getRowCount(); i++) {
             if((boolean)tableFiles.getValueAt(i, 4)) 
                 files.add(new File((String)tableFiles.getValueAt(i, 0)));    
         }
-        if(fileDecoder.getSourceCharset() == null) {
-            JOptionPane.showMessageDialog(null, "Select source Encoding!", null, JOptionPane.WARNING_MESSAGE);
-            return;
-        }
         if(files.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Select files!", null, JOptionPane.WARNING_MESSAGE);
-            return;
+            throw new NullPointerException();
         }
         for(File f : files) {
             if(!f.exists()) {
                 JOptionPane.showMessageDialog(null, f.getAbsolutePath()+" does not exist!", null, JOptionPane.WARNING_MESSAGE);
-                return;
+                files.clear();
+                throw new NullPointerException();
             }
         }
-        fileDecoder.setSourceFiles(files);
+        return files;
+    }
+    
+    private void setTableEncoding() {
+        DefaultTableModel model = (DefaultTableModel) tableEncoding.getModel();
+        for(String s : fileDetector.getAvailableCharsets().keySet()) {
+            model.addRow(new Object[]{s, s == "UTF-8"});
+        }
+        tableEncoding.getRowSorter().toggleSortOrder(1);
+        tableEncoding.getRowSorter().toggleSortOrder(1);
+    }
+    
+    private void setDetectencodingButton() {
+        fileDetector.setSampleSize(Integer.valueOf(textfieldSamplesize.getText()));
+        if(fileDetector.getCharsetsToBeTested()==null) {
+            JOptionPane.showMessageDialog(null, "Select Encodings to Test!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if(!fileDetector.getSampleFile().exists()) {
+            JOptionPane.showMessageDialog(null, "Select sample file!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if(fileDetector.isBruteforce()) {
+            textareaBrute.setText(fileDetector.detectEncoding());
+            dialogBrute.setVisible(true);
+        } else {
+            labelDetectedencoding.setText(fileDetector.detectEncoding());
+            HashSet<Charset> c = new HashSet();
+            c.add(Charset.forName(fileDetector.detectEncoding()));
+            textareaDetectedencoding.setText(fileDetector.detectEncodingBruteforce(fileDetector.getSampleFile(), c, 100));
+            dialogAuto.setVisible(true);
+        }
+    }
+    
+    private NumberFormatter setNumberformatter(JFormattedTextField textfield) {
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(Integer.MAX_VALUE);
+        formatter.setAllowsInvalid(false);
+        formatter.setCommitsOnValidEdit(true);
+        return formatter;
+    }
+    
+    private void enableDetectencoding(boolean enable) {
+        buttonSelectEncoding.setEnabled(enable);
+        textareaSelectedencodings.setEnabled(enable);
+        labelChoosesample.setEnabled(enable);
+        buttonChoosesample.setEnabled(enable);
+        labelSamplefile.setEnabled(enable);
+        labelSamplesize.setEnabled(enable);
+        textfieldSamplesize.setEnabled(enable);
+        buttonDetectencoding.setEnabled(enable);
+    }
+    
+    private void setDecodeButton() {
+
+        if(fileDecoder.getSourceCharset() == null) {
+            JOptionPane.showMessageDialog(null, "Select source Encoding!", null, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            fileDecoder.setSourceFiles(getSelectedFiles());
+        } catch(NullPointerException e) {
+            return;
+        }
         fileDecoder.decode();
         JOptionPane.showMessageDialog(null, "Decoding complete!", "Complete!", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -1795,6 +2053,7 @@ public class MainFrame extends javax.swing.JFrame {
             set.addAll(Set.of(fileChooser.getSelectedFiles()));
             if(!multiSelect) set.add(fileChooser.getSelectedFile());
         }
+        fileChooser.setCurrentDirectory(fileChooser.getCurrentDirectory());
         return set;
     }
     
@@ -1802,6 +2061,15 @@ public class MainFrame extends javax.swing.JFrame {
         String currentCard = fileSelect.getFiles().isEmpty() ? "cardDragDrop" : "cardFile";
         CardLayout c = (CardLayout) panelCard.getLayout();
         c.show(panelCard, currentCard);
+    }
+    private void updateSamplefile() {
+        //calculation to divide file name label so that it does not go out of border
+        if(tableFiles.getRowCount()>0) {
+            File sample = new File((String) tableFiles.getValueAt(0, 0));
+            String str = "<html><p style=\"width:170px\">"+sample.getAbsolutePath()+"</p></html>";
+            fileDetector.setSampleFile(sample);
+            labelSamplefile.setText(str);
+        }
     }
     
     private void updateTable() {
@@ -1829,6 +2097,8 @@ public class MainFrame extends javax.swing.JFrame {
                     if(model.getValueAt(i, 0) == f.getAbsolutePath()) model.removeRow(i);
                 }
         }
+        //automatically displaying first file as sample file at detect encoding panel.
+        updateSamplefile();
         updateCards();
     }
     
@@ -1926,25 +2196,41 @@ public class MainFrame extends javax.swing.JFrame {
         fileSelect.setFilterRegex(".*");
     }
         
+    private void initFileEncodingDetector() {
+        fileDetector = new FileEncodingDetector();
+        fileDetector.setSampleSize(100);
+    }
+    
+    private void initFileHandler() {
+        fileHandler = new FileHandler();
+    }
+    
     /**
      * @param args the command line arguments
      */
 //<editor-fold defaultstate="collapsed" desc="Variable declaration">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonBrowseFile;
+    private javax.swing.JButton buttonChangeFileExt;
+    private javax.swing.JButton buttonChoosesample;
     private javax.swing.JButton buttonChoosetarget;
     private javax.swing.JButton buttonDecode;
-    private javax.swing.JButton buttonDecode1;
+    private javax.swing.JButton buttonDetectencoding;
     private javax.swing.JButton buttonOF;
     private javax.swing.JButton buttonRemove;
     private javax.swing.JButton buttonRemoveAll;
     private javax.swing.JCheckBox buttonSelectAll;
     private javax.swing.JButton buttonSelectEncoding;
+    private javax.swing.ButtonGroup buttongroupDetectencoding;
     private javax.swing.ButtonGroup buttongroupExt;
+    private javax.swing.ButtonGroup buttongroupFileext;
+    private javax.swing.ButtonGroup buttongroupRemanefiles;
+    private javax.swing.ButtonGroup buttongroupSearchfilecontent;
     private javax.swing.ButtonGroup buttongroupTargetfolder;
     private javax.swing.JCheckBox checkBoxHiddenFiles;
     private javax.swing.JCheckBox checkboxFileName;
     private javax.swing.JCheckBox checkboxRegex;
+    private javax.swing.JCheckBox checkboxRenameregex;
     private javax.swing.JComboBox<String> comboboxSourceEncoding;
     private javax.swing.JComboBox<String> comboboxTargetEncoding;
     private javax.swing.JDialog dialogAuto;
@@ -1952,27 +2238,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JDialog dialogSearchResult;
     private javax.swing.JDialog dialogSelectEncoding;
     private javax.swing.JFileChooser fileChooser;
-    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton16;
-    private javax.swing.JButton jButton17;
-    private javax.swing.JButton jButton18;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1983,15 +2259,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -2004,36 +2273,25 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JRadioButton jRadioButton10;
     private javax.swing.JRadioButton jRadioButton11;
-    private javax.swing.JRadioButton jRadioButton12;
-    private javax.swing.JRadioButton jRadioButton5;
-    private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JRadioButton jRadioButton7;
-    private javax.swing.JRadioButton jRadioButton8;
-    private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JLabel labelChoosesample;
+    private javax.swing.JLabel labelDetectedencoding;
     private javax.swing.JLabel labelDropFile;
+    private javax.swing.JLabel labelFilescontaining;
     private javax.swing.JLabel labelOr;
+    private javax.swing.JLabel labelSamplefile;
+    private javax.swing.JLabel labelSamplesize;
     private javax.swing.JLabel labelUploadIcon;
     private javax.swing.JLabel lableExt;
     private javax.swing.JMenuBar menuBar;
@@ -2046,10 +2304,16 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel panelFileFilters;
     private javax.swing.JPanel panelFiles;
     private javax.swing.JPanel panelFunctions;
+    private javax.swing.JRadioButton radioAuto;
+    private javax.swing.JRadioButton radioBrute;
     private javax.swing.JRadioButton radioButtonOther;
     private javax.swing.JRadioButton radiobuttonAll;
+    private javax.swing.JRadioButton radiobuttonOtherChangeExt;
     private javax.swing.JRadioButton radiobuttonOverwriteall;
+    private javax.swing.JRadioButton radiobuttonRenameall;
+    private javax.swing.JRadioButton radiobuttonReplace;
     private javax.swing.JRadioButton radiobuttonTargetfolder;
+    private javax.swing.JRadioButton radiofilesearchregex;
     private javax.swing.JPanel subPanelDecode;
     private javax.swing.JPanel subPanelDetectEncoding;
     private javax.swing.JPanel subPanelDragDrop;
@@ -2058,16 +2322,28 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane subPanelFilesScroll1;
     private javax.swing.JPanel subPanelTool;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tableEncoding;
     private javax.swing.JTable tableFiles;
     private javax.swing.JTable tableFiles1;
     private javax.swing.JTextField textFieldExt;
     private javax.swing.JTextField textFieldFileName;
+    private javax.swing.JTextArea textareaBrute;
+    private javax.swing.JTextArea textareaDetectedencoding;
+    private javax.swing.JTextArea textareaSearchfilecontent;
+    private javax.swing.JTextArea textareaSelectedencodings;
+    private javax.swing.JTextField textfieldChangeext;
     private javax.swing.JTextField textfieldRegex;
+    private javax.swing.JTextField textfieldRenamereplace;
+    private javax.swing.JTextField textfieldRenametarget;
+    private javax.swing.JFormattedTextField textfieldSamplesize;
+    private javax.swing.JTextField textfieldTargetChangeExt;
     private javax.swing.JTextField textfieldTargetfolder;
     // End of variables declaration//GEN-END:variables
     
 // </editor-fold>
     FileSelect fileSelect;
     FileDecoder fileDecoder;
+    FileEncodingDetector fileDetector;
+    FileHandler fileHandler;
 }
 
