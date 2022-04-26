@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -2243,9 +2244,13 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void removeFiles(Set<File> files) {
-        Set<File> f = new HashSet<>();
-        f.addAll(files);
-        fileSelect.removeFiles(f);
+    	Iterator<File> it = files.iterator();
+    	while(it.hasNext()) {
+    		fileSelect.removeFiles(it.next());
+    	}
+//        Set<File> f = new HashSet<>();
+//        f.addAll(files);
+//        fileSelect.removeFiles(f);
         updateTable();
     }
     
